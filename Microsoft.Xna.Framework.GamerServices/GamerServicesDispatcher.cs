@@ -12,21 +12,13 @@ namespace Microsoft.Xna.Framework.GamerServices
 
         public static void Initialize(IServiceProvider serviceProvider)
         {
-            throw new NotImplementedException();
         }
 
         public static void Update()
         {
-            throw new NotImplementedException();
         }
 
-        public static bool IsInitialized
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public static bool IsInitialized => true;
 
         public static IntPtr WindowHandle
         {

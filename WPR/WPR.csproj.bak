@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+	<TargetFrameworks>net5.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
+	<TargetFrameworks>net5.0-windows10.0.17763.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup>
+	<Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="FFMpegCore" Version="4.8.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.17" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.17" />
+    <PackageReference Include="Mono.Cecil" Version="0.11.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Reactive" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.Device.Sensors\Microsoft.Devices.Sensors.csproj" />
+    <ProjectReference Include="..\Microsoft.Phone\Microsoft.Phone.csproj" />
+    <ProjectReference Include="..\Microsoft.Xna.Framework.GamerServices\Microsoft.Xna.Framework.GamerServices.csproj" />
+    <ProjectReference Include="..\System.Device\System.Device.csproj" />
+    <ProjectReference Include="..\ThirdParty\fna\FNA.Core.csproj" />
+    <ProjectReference Include="..\WPF.WindowsCompability\WPR.WindowsCompability.csproj" />
+    <ProjectReference Include="..\WPR.Common\WPR.Common.csproj" />
+    <ProjectReference Include="..\WPR.MonoGameCompabilityPatch\WPR.XnaCompability.csproj" />
+  </ItemGroup>
+
+</Project>

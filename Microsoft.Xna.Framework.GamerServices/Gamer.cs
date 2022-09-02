@@ -2,12 +2,28 @@
 using System.Collections.Generic;
 using System.Text;
 
+using WPR.Common;
+
 namespace Microsoft.Xna.Framework.GamerServices
 {
     public abstract class Gamer
     {
+        internal static SignedInGamerCollection _SignedInGamers;
+
+        private LeaderboardWriter _LeaderboardWriter;
+        private String _GamerTag;
+
         internal Gamer()
         {
+            _LeaderboardWriter = new LeaderboardWriter();
+            _GamerTag = Configuration.Current.GamerTag ?? "HarryDirk";
+        }
+
+        static Gamer()
+        {
+            _SignedInGamers = new SignedInGamerCollection(new List<SignedInGamer>{
+                new SignedInGamer() { PlayerIndex = PlayerIndex.One }
+            });
         }
 
         public IAsyncResult BeginGetProfile(AsyncCallback callback, object asyncState)
@@ -30,12 +46,18 @@ namespace Microsoft.Xna.Framework.GamerServices
             throw new NotImplementedException();
         }
 
+        public static IAsyncResult BeginGetPartnerToken(
+          string audienceUri,
+          AsyncCallback callback,
+          object asyncState)
+        {
+            return StubUtils.ForeverTask;
+        }
+
         public string Gamertag
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            get => _GamerTag;
+            set => _GamerTag = value;
         }
 
         public bool IsDisposed
@@ -50,7 +72,7 @@ namespace Microsoft.Xna.Framework.GamerServices
         {
             get
             {
-                throw new NotImplementedException();
+                return _SignedInGamers;
             }
         }
 
@@ -66,5 +88,9 @@ namespace Microsoft.Xna.Framework.GamerServices
             }
         }
 
+        public LeaderboardWriter LeaderboardWriter
+        {
+            get => _LeaderboardWriter;
+        }
     }
 }

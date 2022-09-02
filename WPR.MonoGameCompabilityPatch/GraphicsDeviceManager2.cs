@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace WPR.MonoGameCompability
+namespace WPR.XnaCompability
 {
     public class GraphicsDeviceManager2 : GraphicsDeviceManager
     {

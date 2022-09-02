@@ -6,6 +6,8 @@ namespace Microsoft.Xna.Framework.GamerServices
 {
     public static class Guide
     {
+        public static bool _SimulateTrialMode = false;
+
         public static IAsyncResult BeginShowKeyboardInput(PlayerIndex player, string title, string description, string defaultText, AsyncCallback callback, object state)
         {
             throw new NotImplementedException();
@@ -113,7 +115,6 @@ namespace Microsoft.Xna.Framework.GamerServices
 
         public static void ShowSignIn(int paneCount, bool onlineOnly)
         {
-            throw new NotImplementedException();
         }
 
         public static bool IsScreenSaverEnabled
@@ -131,7 +132,7 @@ namespace Microsoft.Xna.Framework.GamerServices
         {
             get
             {
-                throw new NotImplementedException();
+                return false;
             }
         }
 
@@ -157,14 +158,8 @@ namespace Microsoft.Xna.Framework.GamerServices
 
         public static bool SimulateTrialMode
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            get => _SimulateTrialMode;
+            set => _SimulateTrialMode = value;
         }
 
     }

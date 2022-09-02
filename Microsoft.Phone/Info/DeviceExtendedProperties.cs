@@ -4,6 +4,12 @@ namespace Microsoft.Phone.Info
 {
     public class DeviceExtendedProperties
     {
+        public static bool TryGetValue(string propertyName, out Object propertyValue)
+        {
+            propertyValue = GetValue(propertyName);
+            return true;
+        }
+
         public static Object? GetValue(string property)
         {
             switch (property)
@@ -20,7 +26,7 @@ namespace Microsoft.Phone.Info
 
                 case "DeviceTotalMemory":
                     // Return 2GB RAM
-                    return 2048UL * 1024 * 1024;
+                    return 2048L * 1024 * 1024;
 
                 default:
                     return null;

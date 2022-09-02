@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 xmlns:p="clr-namespace:WPR.UI.Properties"
+             x:Class="WPR.UI.Pages.SettingsPage">
+	<UniformGrid Margin="20" VerticalAlignment="Top" Columns="1">
+		<Grid VerticalAlignment="Center">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="6*" />
+			</Grid.ColumnDefinitions>
+			<Label Padding="0,0,10,0" Grid.Column="0" VerticalContentAlignment="Center">GamerTag</Label>
+			<TextBox Name="gamerTagTextBox" Grid.Column="1" HorizontalAlignment="Stretch" Watermark="{x:Static p:Resources.EnterYourGamerTag}" />
+		</Grid>
+		<Grid VerticalAlignment="Center" Margin="0,10,0,0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="5*" />
+				<ColumnDefinition Width="1*" />
+			</Grid.ColumnDefinitions>
+			
+			<Label Padding="0,0,10,0" Grid.Column="0" Content="{x:Static p:Resources.DataStoragePath}" VerticalContentAlignment="Center"/>
+			<TextBox Grid.Column="1" Name="dataStoragePathText" IsReadOnly="True" />
+			<Button Grid.Column="2" HorizontalAlignment="Right" Name="dataStoragePathBrowse" Content="{x:Static p:Resources.BrowsePath}" />
+		</Grid>
+		<Button Name="restoreDefaultStoragePathBtn" Margin="0,10,0,0" HorizontalAlignment="Right" Content="{x:Static p:Resources.RestoreDefaultStorage}"/>
+	</UniformGrid>
+</UserControl>

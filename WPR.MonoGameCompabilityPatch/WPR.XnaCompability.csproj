@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+	<TargetFrameworks>net5.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
+	<TargetFrameworks>net5.0-windows10.0.17763.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup>
+	  <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ThirdParty\fna\FNA.Core.csproj" />
+  </ItemGroup>
+
+</Project>

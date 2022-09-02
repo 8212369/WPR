@@ -10,6 +10,12 @@ namespace Microsoft.Xna.Framework.GamerServices
         {
         }
 
+        public SignedInGamerCollection(List<SignedInGamer> gamerList)
+            : base(gamerList)
+        {
+
+        }
+
         public SignedInGamer this[PlayerIndex index]
         {
             get

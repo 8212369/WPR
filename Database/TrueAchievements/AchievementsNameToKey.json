@@ -1,0 +1,87 @@
+{
+	"706f822a-a47e-e011-986b-78e7d1fa76f8":
+	{
+		"Master of Morticulture": "Master of Mosticulture",
+		"Don't Pea in the Pool": "Dont Pea in the Pool"
+	},
+	"f1126266-30a0-4bfc-8985-97cb1d6821b0":
+	{
+		"Armed and Dangerous": "armed",
+		"Technologist": "techlead",
+		"Difficulties Mastered": "owned",
+		"Uncharted": "uncharted",
+		"A Knight Without Fear or Blame": "arabswin",
+		"Flower and Song": "aztecwin",
+		"Let a Hundred Flowers Bloom": "chinawin",
+		"I Will Not Be Triumphed Over": "egyptwin",
+		"One Mistress and No Master": "englandwin",
+		"Imagination Rules the World": "francewin",
+		"Blood and Iron": "germanwin",
+		"An Indomitable Will": "indiawin",
+		"Victory Over Lesser Men": "japanwin",
+		"All Others Must Fail": "mongoliawin",
+		"Veni Vidi Vici": "romewin",
+		"A Great Wind is Blowing": "russiawin",
+		"Fair and Softly Goes Far": "spainwin",
+		"We the People": "uswin",
+		"This World is a Harsh Place": "zuluwin",
+		"A Short Life of Glory": "greecewin"
+	},
+	"5a3f9c59-1d30-4895-bb76-641bdd959a8c":
+	{
+		"A Friend For Life": "Achievement_01_AFriendForLife",
+		"First Contact": "Achievement_02_FirstContact",
+		"Catch Me If You Can": "Achievement_03_CatchMeIfYouCan",
+		"Animal Carer": "Achievement_04_AnimalCarer",
+		"A Great Start": "Achievement_05_AGreatStart",
+		"Pieces of Flair": "Achievement_06_PiecesofFlair",
+		"Hit The Surf": "Achievement_07_HitTheSurf",
+		"Archaeologist": "Achievement_08_Archaeologist",
+		"Under The Falling Blossom": "Achievement_09_UnderTheFallingBlossom",
+		"The Hills Are Alive": "Achievement_10_TheHillsAreAlive",
+		"Mountaineer": "Achievement_11_Mountaineer",
+		"Treasure Hunter": "Achievement_12_TreasureHunter",
+		"Champion": "Achievement_13_Champion",
+		"The Ring Master": "Achievement_14_TheRingMaster",
+		"Wildlife Guru": "Achievement_15_WildlifeGuru"
+	},
+	"6d8088a0-77d6-df11-a844-00237de2db9e":
+	{
+		"the student": "Achievement1",
+		"gaining ground": "Achievement2",
+		"move on": "Achievement3",
+		"almost there": "Achievement4",
+		"catch the train": "Achievement5",
+		"bonus champ": "Achievement6",
+		"free bonus": "Achievement7",
+		"green fingers": "Achievement8",
+		"color of the sun": "Achievement9",
+		"purple rain": "Achievement10",
+		"hard boiled": "Achievement11",
+		"safkas are saved": "Achievement12",
+		"the hunter": "Achievement13",
+		"party hat": "Achievement14",
+		"finally together": "Achievement15"
+	},
+	"50c35d07-1050-479e-baed-b18e7c2aec35":
+	{
+		"Absolute Beginner": "absolutebeginner",
+		"Committed": "committed",
+		"Rock the sea floor": "rocktheseafloor",
+		"Monsta Skills": "monstaskills",
+		"Goldfish Rescue": "goldfishrescue",
+		"Loner": "loner",
+		"Terminator": "terminator",
+		"Sharpshooter": "sharpshooter",
+		"Survivor": "survivor",
+		"Point Break": "pointbreak",
+		"Captain Hook": "captainhook",
+		"Control Freak": "controlfreak",
+		"Happy Birthday": "happybirthday",
+		"Pure Gold": "puregold"
+	},
+	"09cc7f9c-ced4-df11-a844-00237de2db9e":
+	{
+		"Learner's Permit": "Learners Permit"
+	}
+}

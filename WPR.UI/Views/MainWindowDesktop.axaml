@@ -1,0 +1,73 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:WPR.UI.Pages"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+		xmlns:ic="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        x:Class="WPR.UI.Views.MainWindowDesktop"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="WPR 0.0.1"
+		TransparencyLevelHint="AcrylicBlur"
+		Background= "Transparent"
+		Name="MainWindow">
+
+	<Panel>
+		<ExperimentalAcrylicBorder IsHitTestVisible="False">
+			<ExperimentalAcrylicBorder.Material>
+				<ExperimentalAcrylicMaterial
+					BackgroundSource="Digger"
+					TintColor="Black"
+					TintOpacity="1"
+					MaterialOpacity="0.65" />
+			</ExperimentalAcrylicBorder.Material>
+		</ExperimentalAcrylicBorder>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+
+			<TabControl Grid.Column="0" TabStripPlacement="Left" HorizontalAlignment="Left" HorizontalContentAlignment="Left" Name="navigationControl">
+				<TabControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<UniformGrid Columns="1" HorizontalAlignment="Left" />
+					</ItemsPanelTemplate>
+				</TabControl.ItemsPanel>
+
+				<TabItem HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
+					<TabItem.Header>
+						<StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="10,0,0,0">
+							<ic:Icon Value="fa-solid fa-play" FontSize="30" />
+							<Label Content="Play" HorizontalContentAlignment="Center" Margin="0,5,0,0" HorizontalAlignment="Stretch"/>
+						</StackPanel>
+					</TabItem.Header>
+				</TabItem>
+
+				<TabItem HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10,0,0,0">
+					<TabItem.Header>
+						<StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
+							<ic:Icon Value="fa-duotone fa-gear" FontSize="30" />
+							<Label Content="Settings" HorizontalContentAlignment="Center" Margin="0,5,0,0" HorizontalAlignment="Stretch"/>
+						</StackPanel>
+					</TabItem.Header>
+				</TabItem>
+
+				<TabItem HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10,0,0,0">
+					<TabItem.Header>
+						<StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
+							<ic:Icon Value="fa-solid fa-circle-info" FontSize="30" />
+							<Label Content="About" HorizontalContentAlignment="Center" Margin="0,5,0,0" HorizontalAlignment="Stretch"/>
+						</StackPanel>
+					</TabItem.Header>
+				</TabItem>
+			</TabControl>
+
+			<TransitioningContentControl Grid.Column="1" Name="contentControl">
+				<TransitioningContentControl.PageTransition>
+					<CrossFade Duration="0:00:00.150" />
+				</TransitioningContentControl.PageTransition>
+			</TransitioningContentControl>
+		</Grid>
+	</Panel>
+</Window>

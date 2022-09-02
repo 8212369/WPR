@@ -1,0 +1,30 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:p="clr-namespace:WPR.UI.Properties"
+		mc:Ignorable="d" Width="500" Height="120"
+        x:Class="WPR.UI.Views.ProgressWindow"
+        Title="ProgressWindow"
+		WindowStartupLocation="CenterScreen">
+	<Grid Margin="10">
+		<Grid.RowDefinitions>
+			<RowDefinition/>
+			<RowDefinition/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+		<Label Content="{x:Static p:Resources.PleaseWait}"/>
+		<Grid Grid.Row="1" VerticalAlignment="Center">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="10*"/>
+				<ColumnDefinition Width="1*"/>
+			</Grid.ColumnDefinitions>
+			
+			<ProgressBar Name="progressBar" Minimum="0" Maximum="100" Grid.Column="0" VerticalAlignment="Center"/>
+			<Label Name="progressBarValue" HorizontalContentAlignment="Center" Grid.Column="1">0%</Label>
+		</Grid>
+		<Panel HorizontalAlignment="Right" Grid.Row="2">
+			<Button Name="cancelButton" HorizontalAlignment="Right">Cancel</Button>
+		</Panel>
+	</Grid>
+</Window>

@@ -47,6 +47,12 @@ namespace Microsoft.Xna.Framework.GamerServices
         {
         }
 
+        public GamerCollection(List<T> list)
+            : base(list)
+        {
+
+        }
+
         IEnumerator<Gamer> IEnumerable<Gamer>.GetEnumerator()
         {
             throw new NotImplementedException();

@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:p="clr-namespace:WPR.UI.Properties"
+             xmlns:nst="clr-namespace:WPR.UI.Views"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="WPR.UI.Pages.ApplicationListingPage">
+	<Panel>
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition />
+			</Grid.RowDefinitions>
+			<TextBox Grid.Row="0" Name="searchBarTextBox" Text="{Binding SearchText}" Margin="10,10,10,0" Watermark="{x:Static p:Resources.SearchForAppSearchBar}" Background="Transparent"/>
+			<ListBox Grid.Row="1" Name="appListBox" Margin="10 10" VerticalAlignment="Stretch" Items="{Binding Applications}" SelectedItem="{Binding ChoosenApp}" Background="Transparent" ScrollViewer.VerticalScrollBarVisibility="Visible">
+				<ListBox.ItemsPanel>
+					<ItemsPanelTemplate>
+						<WrapPanel />
+					</ItemsPanelTemplate>
+				</ListBox.ItemsPanel>
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<nst:ApplicationView />
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox >
+		</Grid>
+		<Button x:Name="addNewAppButton"
+				Width="64"
+				Height="64"
+				Content="+"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Bottom"
+				HorizontalContentAlignment="Center"
+				VerticalContentAlignment="Center"
+				FontSize="40"
+				Margin="20"
+				CornerRadius="64"
+				Background="BlueViolet"
+				ToolTip.Tip="{x:Static p:Resources.InstallNewAppToolTip}"
+				/>
+	</Panel>
+</UserControl>

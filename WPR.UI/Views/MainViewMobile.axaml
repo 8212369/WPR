@@ -1,0 +1,58 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:ic="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="720" d:DesignHeight="1520"
+             x:Class="WPR.UI.Views.MainViewMobile">
+	<Panel>
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+
+			<TransitioningContentControl Grid.Row="0" Name="contentControl">
+				<TransitioningContentControl.PageTransition>
+					<CrossFade Duration="0:00:00.150" />
+				</TransitioningContentControl.PageTransition>
+			</TransitioningContentControl>
+
+			<TabControl Grid.Row="1" TabStripPlacement="Bottom" VerticalAlignment="Bottom" Name="navigationControl">
+				<TabControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<UniformGrid Rows="1" HorizontalAlignment="Stretch" />
+					</ItemsPanelTemplate>
+				</TabControl.ItemsPanel>
+
+				<TabItem HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
+					<TabItem.Header>
+						<StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="10,0,0,0">
+							<ic:Icon Value="fa-solid fa-play" FontSize="30" />
+							<Label Content="Apps" HorizontalContentAlignment="Center" Margin="0,5,0,0" HorizontalAlignment="Stretch"/>
+						</StackPanel>
+					</TabItem.Header>
+				</TabItem>
+
+				<TabItem HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10,0,0,0">
+					<TabItem.Header>
+						<StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
+							<ic:Icon Value="fa-duotone fa-gear" FontSize="30" />
+							<Label Content="Settings" HorizontalContentAlignment="Center" Margin="0,5,0,0" HorizontalAlignment="Stretch"/>
+						</StackPanel>
+					</TabItem.Header>
+				</TabItem>
+
+
+				<TabItem HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10,0,0,0">
+					<TabItem.Header>
+						<StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
+							<ic:Icon Value="fa-solid fa-circle-info" FontSize="30" />
+							<Label Content="About" HorizontalContentAlignment="Center" Margin="0,5,0,0" HorizontalAlignment="Stretch"/>
+						</StackPanel>
+					</TabItem.Header>
+				</TabItem>
+			</TabControl>
+		</Grid>
+	</Panel>
+</UserControl>

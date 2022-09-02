@@ -1,0 +1,18 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" Width="{Binding IconSize}" Height="{Binding Height}"
+             x:Class="WPR.UI.Views.ApplicationView">
+	<Grid HorizontalAlignment="Center" Background="Transparent" ToolTip.Tip="{Binding Tooltip}">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="{Binding IconSize}"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<Image Grid.Row="0" Margin="0,10" Width="{Binding IconSize}" Height="{Binding IconSize}" Source="{Binding Icon}"/>
+		<Label Grid.Row="1" Margin="0,5,0,10">
+            <TextBlock HorizontalAlignment="Center" Text="{Binding Name}" TextAlignment="Center" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" />
+        </Label>
+	</Grid>
+</UserControl>
