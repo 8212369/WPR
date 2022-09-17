@@ -20,6 +20,8 @@ namespace WPR
         private AssemblyNameReference FNARef;
         private AssemblyNameReference SystemRunTimeRef;
         private AssemblyNameReference WindowsCompRef;
+        private AssemblyNameReference ServiceModelPrimitivesRef;
+        private AssemblyNameReference ServiceModelHTTPRef;
 
         private class TypePatchInfo
         {
@@ -29,6 +31,7 @@ namespace WPR
         }
 
         private Dictionary<string, TypePatchInfo> Patches;
+        private Dictionary<string, Type> MemberPatches;
 
         public ApplicationPatcher()
         {
@@ -36,6 +39,8 @@ namespace WPR
             FNACompRef = AssemblyNameReference.Parse("WPR.XnaCompability");
             SystemRunTimeRef = AssemblyNameReference.Parse("System.Runtime");
             WindowsCompRef = AssemblyNameReference.Parse("WPR.WindowsCompability");
+            ServiceModelPrimitivesRef = AssemblyNameReference.Parse("System.ServiceModel.Primitives");
+            ServiceModelHTTPRef = AssemblyNameReference.Parse("System.ServiceModel.Http");
 
             Patches = new Dictionary<string, TypePatchInfo>()
             {
@@ -68,6 +73,132 @@ namespace WPR
                     Reference = WindowsCompRef,
                     NewNamespace = "WPR.WindowsCompability"
                 }
+                },
+                { "Microsoft.Xna.Framework.Media.MediaSource", new TypePatchInfo()
+                {
+                    Reference = FNACompRef,
+                    NewNamespace = "WPR.XnaCompability.Media"
+                }
+                },
+                { "Microsoft.Xna.Framework.Media.MediaSourceType", new TypePatchInfo()
+                {
+                    Reference = FNACompRef,
+                    NewNamespace = "WPR.XnaCompability.Media"
+                }
+                },
+                { "Microsoft.Xna.Framework.Media.SongCollection", new TypePatchInfo()
+                {
+                    Reference = FNACompRef,
+                    NewNamespace = "WPR.XnaCompability.Media"
+                }
+                },
+                { "Microsoft.Xna.Framework.Media.Artist", new TypePatchInfo()
+                {
+                    Reference = FNACompRef,
+                    NewNamespace = "WPR.XnaCompability.Media"
+                }
+                },
+                { "Microsoft.Xna.Framework.Media.ArtistCollection", new TypePatchInfo()
+                {
+                    Reference = FNACompRef,
+                    NewNamespace = "WPR.XnaCompability.Media"
+                }
+                },
+                { "Microsoft.Xna.Framework.Media.Album", new TypePatchInfo()
+                {
+                    Reference = FNACompRef,
+                    NewNamespace = "WPR.XnaCompability.Media"
+                }
+                },
+                { "Microsoft.Xna.Framework.Media.AlbumCollection", new TypePatchInfo()
+                {
+                    Reference = FNACompRef,
+                    NewNamespace = "WPR.XnaCompability.Media"
+                }
+                },
+                { "Microsoft.Xna.Framework.Media.Genre", new TypePatchInfo()
+                {
+                    Reference = FNACompRef,
+                    NewNamespace = "WPR.XnaCompability.Media"
+                }
+                },
+                { "Microsoft.Xna.Framework.Media.MediaLibrary", new TypePatchInfo()
+                {
+                    Reference = FNACompRef,
+                    NewNamespace = "WPR.XnaCompability.Media"
+                }
+                },
+                { "System.Windows.Media.SolidColorBrush", new TypePatchInfo()
+                {
+                    Reference = WindowsCompRef,
+                    NewNamespace = "WPR.WindowsCompability.Media"
+                }
+                },
+                { "System.Windows.Media.Color", new TypePatchInfo()
+                {
+                    Reference = WindowsCompRef,
+                    NewNamespace = "WPR.WindowsCompability.Media"
+                }
+                },
+                { "System.Windows.Thickness", new TypePatchInfo()
+                {
+                    Reference = WindowsCompRef,
+                    NewNamespace = "WPR.WindowsCompability.Media"
+                }
+                },
+                { "System.Windows.ResourceDictionary", new TypePatchInfo()
+                {
+                    Reference = WindowsCompRef,
+                    NewNamespace = "WPR.WindowsCompability"
+                }
+                },
+                { "System.ServiceModel.XmlSerializerFormatAttribute", new TypePatchInfo()
+                {
+                    Reference = ServiceModelPrimitivesRef
+                }
+                },
+                { "System.ServiceModel.BasicHttpBinding", new TypePatchInfo()
+                {
+                    Reference = ServiceModelHTTPRef
+                }
+                },
+                { "System.ServiceModel.BasicHttpSecurity", new TypePatchInfo()
+                {
+                    Reference = ServiceModelHTTPRef
+                }
+                },
+                { "System.ServiceModel.BasicHttpSecurityMode", new TypePatchInfo()
+                {
+                    Reference = ServiceModelHTTPRef
+                }
+                }
+            };
+
+            MemberPatches = new Dictionary<string, Type>
+            {
+                {
+                    "System.Type System.Type::GetType(System.String,System.Boolean)",
+                    typeof(WPR.WindowsCompability.Type2)
+                },
+                {
+                    "Microsoft.Xna.Framework.Graphics.DisplayMode Microsoft.Xna.Framework.Graphics.GraphicsDevice::get_DisplayMode()",
+                    typeof(WPR.XnaCompability.Graphics.GraphicsDevice2)
+                },
+                {
+                    "Microsoft.Xna.Framework.Graphics.DisplayMode Microsoft.Xna.Framework.Graphics.GraphicsAdapter::get_CurrentDisplayMode()",
+                    typeof(WPR.XnaCompability.Graphics.GraphicsAdapter2)
+                },
+                {
+                    "System.String System.IO.Path::GetDirectoryName(System.String)",
+                    typeof(WPR.WindowsCompability.Path2)
+                },
+                {
+                    "System.String System.IO.Path::GetFileName(System.String)",
+                    typeof(WPR.WindowsCompability.Path2)
+                },
+                {
+                    "System.String System.IO.Path::GetFileNameWithoutExtension(System.String)",
+                    typeof(WPR.WindowsCompability.Path2)
                 }
             };
         }
@@ -220,6 +351,17 @@ namespace WPR
                 Path.GetExtension(modulePath));
 
             AssemblyNameReference? xnaGameServices = null;
+
+            // Remove unneeded attribute (pretty sure!)
+            foreach (var attrib in module.Assembly.CustomAttributes)
+            {
+                if (attrib.AttributeType.FullName == "System.Runtime.CompilerServices.CodeGenerationAttribute")
+                {
+                    module.Assembly.CustomAttributes.Remove(attrib);
+                    break;
+                }
+            }
+
             foreach (var refer in module.AssemblyReferences)
             {
                 if (refer.Name.Contains("Microsoft.Xna"))
@@ -234,6 +376,17 @@ namespace WPR
                         refer.Version = FNARef.Version;
                         refer.PublicKey = FNARef.PublicKey;
                     }
+                } else if (refer.Name.Equals("mscorlib.Extensions", StringComparison.OrdinalIgnoreCase))
+                {
+                    refer.Name = SystemRunTimeRef.Name;
+                    refer.Version = SystemRunTimeRef.Version;
+                    refer.PublicKey = SystemRunTimeRef.PublicKey;
+                }
+                else if (refer.Name.Equals("System.ServiceModel", StringComparison.OrdinalIgnoreCase))
+                {
+                    refer.Name = ServiceModelPrimitivesRef.Name;
+                    refer.Version = ServiceModelPrimitivesRef.Version;
+                    refer.PublicKey = ServiceModelPrimitivesRef.PublicKey;
                 }
             }
 
@@ -242,6 +395,28 @@ namespace WPR
             module.AssemblyReferences.Add(FNACompRef);
             module.AssemblyReferences.Add(WindowsCompRef);
             module.AssemblyReferences.Add(SystemRunTimeRef);
+            module.AssemblyReferences.Add(ServiceModelPrimitivesRef);
+            module.AssemblyReferences.Add(ServiceModelHTTPRef);
+
+            Dictionary<string, TypeReference> typeRefPatchCache = new Dictionary<string, TypeReference>();
+
+            foreach (var memberRef in module.GetMemberReferences())
+            {
+                foreach (var patch in MemberPatches)
+                {
+                    if (memberRef.FullName == patch.Key)
+                    {
+                        if (typeRefPatchCache.ContainsKey(patch.Value.FullName!))
+                        {
+                            memberRef.DeclaringType = typeRefPatchCache[patch.Value.FullName!];
+                        } else
+                        {
+                            memberRef.DeclaringType = module.ImportReference(patch.Value);
+                            typeRefPatchCache.Add(patch.Value.FullName!, memberRef.DeclaringType);
+                        }
+                    }
+                }
+            }
 
             foreach (var existingRef in module.GetTypeReferences())
             {

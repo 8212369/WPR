@@ -8,59 +8,51 @@ namespace Microsoft.Xna.Framework.GamerServices
 {
     public class GamerCollection<T> : ReadOnlyCollection<T>, IEnumerable<Gamer>, IEnumerable where T : Gamer
     {
+        private List<T> _InternalList;
 
         public struct GamerCollectionEnumerator : IEnumerator<T>, IDisposable, IEnumerator
         {
-            public T Current
+            internal GamerCollectionEnumerator(List<T>.Enumerator enumerator)
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                _Enumerator = enumerator;
             }
-            public void Dispose()
-            {
-                throw new NotImplementedException();
-            }
+
+            private List<T>.Enumerator _Enumerator;
+
+            public T Current => _Enumerator.Current;
+
+            public void Dispose() => _Enumerator.Dispose();
 
             void IEnumerator.Reset()
             {
-                throw new NotImplementedException();
+                (_Enumerator as IEnumerator).Reset();
             }
 
-            public bool MoveNext()
-            {
-                throw new NotImplementedException();
-            }
+            public bool MoveNext() => _Enumerator.MoveNext();
 
-            object IEnumerator.Current
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-            }
+            object IEnumerator.Current => _Enumerator.Current;
         }
 
         internal GamerCollection()
             : base(new List<T>())
         {
+            _InternalList = (Items as List<T>)!;
         }
 
         public GamerCollection(List<T> list)
             : base(list)
         {
-
+            _InternalList = (Items as List<T>)!;
         }
 
         IEnumerator<Gamer> IEnumerable<Gamer>.GetEnumerator()
         {
-            throw new NotImplementedException();
+            return _InternalList.GetEnumerator();
         }
 
-        public GamerCollectionEnumerator GetEnumerator()
+        public new GamerCollectionEnumerator GetEnumerator()
         {
-            throw new NotImplementedException();
+            return new GamerCollectionEnumerator(_InternalList.GetEnumerator());
         }
 
     }

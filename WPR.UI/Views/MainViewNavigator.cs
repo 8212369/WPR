@@ -44,7 +44,7 @@ namespace WPR.UI.Views
                     // Workaround control not displaying back
                     // TODO: Report to the developers
                     contentControl.Content = _Pages[_CurrentIndex];
-                    contentControl.Content = previousControl;
+                    contentControl.Content = null;
                     contentControl.Content = _Pages[_CurrentIndex];
                 }
             };

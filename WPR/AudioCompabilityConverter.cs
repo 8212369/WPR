@@ -1,17 +1,56 @@
-﻿using FFMpegCore;
-
-using System;
+﻿using System;
 using System.IO;
 using System.Threading;
 using System.Linq;
 using System.Threading.Tasks;
 
+#if __ANDROID__
+using Com.Arthenica.Ffmpegkit;
+#else
+using FFMpegCore;
+#endif
+
 namespace WPR
 {
     public static class AudioCompabilityConverter
     {
+#if __ANDROID__
+        private class FFMPEGConvertSession : Java.Lang.Object, IFFmpegSessionCompleteCallback
+        {
+            public TaskCompletionSource<FFmpegSession?> CompletionSource;
+
+            public FFMPEGConvertSession()
+            {
+                CompletionSource = new TaskCompletionSource<FFmpegSession?>(TaskCreationOptions.RunContinuationsAsynchronously);
+            }
+
+            public void Apply(FFmpegSession? session)
+            {
+                CompletionSource.SetResult(session);
+            }
+
+            public Task<FFmpegSession?> Convert(string source, string dest)
+            {
+                var session = FFmpegKit.ExecuteAsync($"-i \"{source}\" \"{dest}\"", this);
+
+                if (session == null)
+                {
+                    CompletionSource.SetResult(null);
+                    return CompletionSource.Task;
+                }
+
+                return CompletionSource.Task;
+            }
+        }
+#endif
+
         public static async Task ScanWmaAndConvert(string rootFolder, Action<int> progressReport, CancellationToken cancelToken)
         {
+#if __MOBILE__
+            // I love this kit. Ignore so that the exception stack of Mono is not corrupted
+            FFmpegKitConfig.IgnoreSignal(Signal.Sigxcpu);
+#endif
+
             var fileEnum = Directory.EnumerateFiles(rootFolder, "*.wma", SearchOption.AllDirectories).ToList();
 
             int countSoFar = 0;
@@ -23,8 +62,6 @@ namespace WPR
                 {
                     return;
                 }
-
-                string test = Path.ChangeExtension(filename, ".xnb");
 
                 if (!File.Exists(filename + ".xnb") && !File.Exists(Path.ChangeExtension(filename, ".xnb"))) {
                     countSoFar++;
@@ -51,6 +88,19 @@ namespace WPR
                         return;
                     }
 
+#if __ANDROID__
+                    var session = await new FFMPEGConvertSession().Convert(filename, newFilename);
+
+                    if (session == null)
+                    {
+                        continue;
+                    }
+
+                    if (!ReturnCode.IsSuccess(session.ReturnCode)) 
+                    {
+                        continue;
+                    }
+#else
                     bool ok = await FFMpegArguments
                         .FromFileInput(filename)
                         .OutputToFile(newFilename, true, null)
@@ -61,6 +111,7 @@ namespace WPR
                         Common.Log.Warn(Common.LogCategory.AppAudioConverter, $"Fail to convert audio file {filename} to ogg!");
                         continue;
                     }
+#endif
 
                     headerCheckFile.Dispose();
 

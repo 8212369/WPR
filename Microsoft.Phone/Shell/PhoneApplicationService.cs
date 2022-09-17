@@ -5,6 +5,8 @@ namespace Microsoft.Phone.Shell
 {
     public class PhoneApplicationService
     {
+        private bool _AppActivated = false;
+
         static PhoneApplicationService()
         {
             Current = new PhoneApplicationService();
@@ -14,11 +16,14 @@ namespace Microsoft.Phone.Shell
         {
             UserIdleDetectionMode = IdleDetectionMode.Disabled;
             ApplicationIdleDetectionMode = IdleDetectionMode.Disabled;
+
+            State = new Dictionary<string, object>();
         }
 
-        public void HandleOneFrameRunDone(bool anew)
+        public void HandleApplicationStart(bool anew)
         {
-            Activated?.Invoke(this, new ActivatedEventArgs(!anew));
+            _Activated?.Invoke(this, new ActivatedEventArgs(!anew));
+            _AppActivated = true;
         }
 
         public void HandleApplicationExit()
@@ -30,7 +35,26 @@ namespace Microsoft.Phone.Shell
             Current = new PhoneApplicationService();
         }
 
-        public event EventHandler<ActivatedEventArgs>? Activated;
+        private event EventHandler<ActivatedEventArgs>? _Activated;
+
+        public event EventHandler<ActivatedEventArgs>? Activated
+        {
+            add
+            {
+                if (_AppActivated)
+                {
+                    value?.Invoke(this, new ActivatedEventArgs(false));
+                } else
+                {
+                    _Activated += value;
+                }
+            }
+
+            remove
+            {
+                _Activated -= value;
+            }
+        }
         public event EventHandler<DeactivatedEventArgs>? Deactivated;
         public event EventHandler<LaunchingEventArgs>? Launching;
         public event EventHandler<ClosingEventArgs>? Closing;
@@ -39,7 +63,7 @@ namespace Microsoft.Phone.Shell
 
         public static PhoneApplicationService? Current { get; private set; }
 
-        public IDictionary<string, object>? State { get; private set; }
+        public IDictionary<string, object> State { get; private set; }
 
         public IdleDetectionMode UserIdleDetectionMode { get; set; }
         public IdleDetectionMode ApplicationIdleDetectionMode { get; set; }

@@ -3,6 +3,10 @@ using DesktopNotifications.Apple;
 using DesktopNotifications.FreeDesktop;
 using DesktopNotifications.Windows;
 
+#if __ANDROID__
+using DesktopNotifications.Android;
+#endif
+
 using System.Runtime.InteropServices;
 using System;
 
@@ -12,8 +16,11 @@ namespace WPR.Common
     {
         public static INotificationManager NotificationManager { get; set; }
 
-        static NativeUI()
+        public static void Initialize(object hostControl = null)
         {
+#if __ANDROID__
+            NotificationManager = new AndroidNotificationManager((hostControl as Android.Content.Context)!);
+#else
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 NotificationManager = new FreeDesktopNotificationManager();
@@ -25,10 +32,11 @@ namespace WPR.Common
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
                 NotificationManager = new AppleNotificationManager();
-            } else
-            {
+            } else {
                 throw new PlatformNotSupportedException();
             }
+#endif
+            NotificationManager.Initialize();
         }
     }
 }

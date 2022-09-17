@@ -7,6 +7,7 @@
         AppInstall,
         AppAudioConverter,
         AppPatcher,
-        AppList
+        AppList,
+        Android
     }
 }

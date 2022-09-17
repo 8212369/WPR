@@ -26,7 +26,7 @@ namespace Microsoft.Xna.Framework.GamerServices
             _SignedInvokeThread = new Thread(delegate () {
                 _NewSignedRequestSema.WaitOne();
 
-                Thread.Sleep(100);
+                Thread.Sleep(3000);
                 _SignedIn.Invoke(null, new SignedInEventArgs(_SignedInGamers[0]));
             });
 
@@ -147,8 +147,9 @@ namespace Microsoft.Xna.Framework.GamerServices
                         {
                             Title = Properties.Resources.AchievementUnlocked,
                             Body = $"{achievements[0].GamerScore}G - {achievements[0].Name}",
-                            ImagePath = achievements[0]._IconPath
-                        }, DateTime.Now + TimeSpan.FromSeconds(5));
+                            ImagePath = achievements[0]._IconPath,
+                            SoundUri = "AchievementUnlocked"
+                        }, DateTime.Now + TimeSpan.FromDays(1));
                     } catch (Exception ex)
                     {
                         Log.Error(LogCategory.GamerServices, $"Fail to display Achievement notification with exception:\n {ex}");
@@ -157,17 +158,23 @@ namespace Microsoft.Xna.Framework.GamerServices
 
                 await AchievementContext.Current!.SaveChangesAsync();
 
-                TaskCompletionSource source = new TaskCompletionSource(state);
-                source.SetResult();
+                if (callback != null)
+                {
+                    TaskCompletionSource source = new TaskCompletionSource(state);
+                    source.SetResult();
 
-                callback(source.Task);
-                return source.Task;
+                    callback(source.Task);
+                }
+
+                return Task.CompletedTask;
             });
         }
 
         public void EndAwardAchievement(IAsyncResult result)
         {
         }
+
+        public void AwardAchievement(string achievementKey) => EndAwardAchievement(BeginAwardAchievement(achievementKey, null, null));
 
         public FriendCollection GetFriends()
         {

@@ -10,60 +10,42 @@ using MessageBox.Avalonia;
 using System.Reactive.Linq;
 using WPR.Models;
 using WPR.Common;
+using Avalonia.Platform.Storage;
 
 namespace WPR.UI.Pages
 {
     public partial class ApplicationListingPage : ReactiveUserControl<ApplicationListingPageViewModel>
     {
-        private List<FileDialogFilter> AppInstallFileFilters;
+        private List<FilePickerFileType> AppInstallFileFilters;
 
         public ApplicationListingPage()
         {
             InitializeComponent();
             DataContext = new ApplicationListingPageViewModel();
 
-            ViewModel!.AppPrepareLaunch += () => GetWindow().Hide();
-            ViewModel!.AppDone += async runOk =>
+            AppInstallFileFilters = new List<FilePickerFileType>
             {
-                GetWindow().Show();
-                if (!runOk)
+                new FilePickerFileType("XAP file")
                 {
-                    var msgBox = MessageBoxManager.GetMessageBoxStandardWindow(
-                        title: Properties.Resources.AppRunError,
-                        text: Properties.Resources.ExceptionRunApp,
-                        icon: MessageBox.Avalonia.Enums.Icon.Error,
-                        windowStartupLocation: WindowStartupLocation.CenterScreen);
-
-                    await msgBox.ShowDialog(GetWindow());
-                }
-            };
-
-            AppInstallFileFilters = new List<FileDialogFilter>
-            {
-                new FileDialogFilter
-                {
-                    Name = "XAP file",
-                    Extensions = new List<string> { "xap" }
+                    Patterns = new List<string> { "*.xap" }
                 },
-                new FileDialogFilter
+                new FilePickerFileType("All files")
                 {
-                    Name = "All files",
-                    Extensions = new List<string> { "*" }
+                    Patterns = new List<string> { "*.*" }
                 }
             };
 
             this.Get<Button>("addNewAppButton").Click += async delegate
             {
-                var result = await new OpenFileDialog()
+                var result = await GetStorageProvider().OpenFilePickerAsync(new FilePickerOpenOptions()
                 {
                     Title = "Choose XAP file",
-                    Filters = AppInstallFileFilters
-                }.ShowAsync(GetWindow());
+                    FileTypeFilter = AppInstallFileFilters
+                });
 
                 if (result != null)
                 {
-                    var InstallProgressWindow = new ProgressWindow();
-                    InstallProgressWindow.Title = Properties.Resources.InstallingApp;
+                    var InstallProgressWindow = new ProgressView();
                     InstallProgressWindow.CancelRequested += obj => ViewModel!.CancelSource!.Cancel();
 
                     ViewModel!.InstallationSetProgress += progress => Dispatcher.UIThread.InvokeAsync(() => InstallProgressWindow.Progress = progress);
@@ -72,14 +54,12 @@ namespace WPR.UI.Pages
                         {
                             Application app = context.Input;
 
-                            var msgBox = MessageBoxManager.GetMessageBoxStandardWindow(
+                            MessageBox.Avalonia.Enums.ButtonResult result = await MessageBoxUtils.GetMessageDialogResult(
                                 title: Properties.Resources.ApplicationAlreadyInstalled,
                                 text: String.Format(Properties.Resources.ApplicationAlreadyInstalledDescription, app.Name),
                                 icon: MessageBox.Avalonia.Enums.Icon.Question,
-                                windowStartupLocation: WindowStartupLocation.CenterScreen,
-                                @enum: MessageBox.Avalonia.Enums.ButtonEnum.YesNo);
+                                buttons: MessageBox.Avalonia.Enums.ButtonEnum.YesNo);
 
-                            MessageBox.Avalonia.Enums.ButtonResult result = await msgBox.ShowDialog(InstallProgressWindow);
                             context.SetOutput(result == MessageBox.Avalonia.Enums.ButtonResult.Yes);
                         }
                     }));
@@ -91,28 +71,28 @@ namespace WPR.UI.Pages
                                 return;
                             }
 
-                            var err = await ViewModel!.InstallRequestCommand.Execute(result[0]);
+                            var err = await ViewModel!.InstallRequestCommand.Execute(await result[0].OpenReadAsync());
                             
                             string errUserStr = LocaleUtils.GetDisplayName(err);
                             bool failed = err != ApplicationInstallError.None;
 
-                            var msgBox = MessageBoxManager.GetMessageBoxStandardWindow(
+                            await MessageBoxUtils.GetMessageDialogResult(
                                 title: failed ? Properties.Resources.InstallationFailed : Properties.Resources.InstallationSucceed,
                                 text: errUserStr,
-                                icon: failed ? MessageBox.Avalonia.Enums.Icon.Error : MessageBox.Avalonia.Enums.Icon.Success,
-                                windowStartupLocation: WindowStartupLocation.CenterScreen);
+                                icon: failed ? MessageBox.Avalonia.Enums.Icon.Error : MessageBox.Avalonia.Enums.Icon.Success);
 
-                            await msgBox.ShowDialog(InstallProgressWindow);
                             ViewModel!.UpdateApplicationList(ViewModel!.SearchText);
 
-                            InstallProgressWindow.Close();
+                            DialogHost.DialogHost.Close(null);
                         });
 
-                    await InstallProgressWindow.ShowDialog(GetWindow());
+                    await DialogHost.DialogHost.Show(InstallProgressWindow);
                 }
             };
         }
 
         Window GetWindow() => VisualRoot as Window ?? throw new NullReferenceException("Invalid Owner");
+        TopLevel GetTopLevel() => VisualRoot as TopLevel ?? throw new NullReferenceException("Invalid Owner");
+        IStorageProvider GetStorageProvider() => GetTopLevel().StorageProvider;
     }
 }

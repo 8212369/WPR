@@ -10,8 +10,8 @@ namespace Microsoft.Xna.Framework.GamerServices
         public DbSet<Achievement>? Achievements { get; set; }
         private static AchievementContext? _Current;
 
-        private const string DatabasePath = "Database\\achievements.db";
-        private const string DatabaseFolder = "Database\\";
+        private const string DatabasePath = "Database/achievements.db";
+        private const string DatabaseFolder = "Database/";
 
         public static AchievementContext Current
         {

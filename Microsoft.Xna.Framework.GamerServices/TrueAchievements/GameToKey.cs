@@ -20,7 +20,7 @@ namespace Microsoft.Xna.Framework.GamerServices.TrueAchievements
 
         public GameToKey()
         {
-            JsonDataPath = Configuration.Current.DataPath("Database\\TrueAchievements");
+            JsonDataPath = Configuration.Current.DataPath("Database/TrueAchievements");
             Directory.CreateDirectory(JsonDataPath);
 
             try

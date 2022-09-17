@@ -9,6 +9,7 @@ using Microsoft.Phone.Shell;
 
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace WPR
 {
@@ -25,7 +26,7 @@ namespace WPR
             };
         }
 
-        public static void Start(Application app)
+        public static async Task Start(Application app, Action<DisplayOrientation>? requestOrientation = null)
         {
             if (app.ApplicationType != ApplicationType.XNA)
             {
@@ -45,30 +46,43 @@ namespace WPR
 
             // Instatiate
             Type? mainType = assem.GetType(app.EntryPoint);
-            Game? obj = Activator.CreateInstance(mainType!) as Game;
 
-            obj!.IsMouseVisible = true;
-            obj!.Window.Title = $"{app.Name} - {app.Author} (Publisher: {app.Publisher})";
-
-            TouchPanel.MouseAsTouch = true;
-
-            obj.RunOneFrame();
-
-            // After initalization one frame done, handle some stuffs
-            PhoneApplicationService.Current!.HandleOneFrameRunDone(true);
-
-            obj.Run();
-
-            try
+            // Run on separate thread to not affect the UI
+            await Task.Run(() =>
             {
-                PhoneApplicationService.Current!.HandleApplicationExit();
-            } catch (Exception ex)
-            {
-                Log.Warn(LogCategory.AppList, $"Ignored clean-up exception:\n {ex}");
-            }
+                using (Game? obj = Activator.CreateInstance(mainType!) as Game)
+                {
+                    // XNA game on Windows Phone tend to set their W/H in constructor
+                    var deviceManager = obj!.Services.GetService(typeof(IGraphicsDeviceManager)) as GraphicsDeviceManager;
+                    if (deviceManager != null)
+                    {
+                        requestOrientation?.Invoke((deviceManager.PreferredBackBufferWidth > deviceManager.PreferredBackBufferHeight) ?
+                            DisplayOrientation.LandscapeRight : DisplayOrientation.Portrait);
+                    }
 
-            obj.Exit();
-            obj.Dispose();
+                    obj!.IsMouseVisible = true;
+                    obj!.Window.Title = $"{app.Name} - {app.Author} (Publisher: {app.Publisher})";
+
+#if !__MOBILE__
+                    TouchPanel.MouseAsTouch = true;
+#endif
+
+                    // After initalization one frame done, handle some stuffs
+                    PhoneApplicationService.Current!.HandleApplicationStart(true);
+                    obj.Run();
+
+                    try
+                    {
+                        PhoneApplicationService.Current!.HandleApplicationExit();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Warn(LogCategory.AppList, $"Ignored clean-up exception:\n {ex}");
+                    }
+
+                    obj.Exit();
+                }
+            });
         }
     }
 }

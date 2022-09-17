@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "WPR.UI.Desktop": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

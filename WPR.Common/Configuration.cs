@@ -13,7 +13,8 @@ namespace WPR.Common
         };
 
         private const string ConfigurationFilePath = "config.json";
-        private static Configuration _Current;
+
+        private string PrivateDataFolderPath;
         private ConfigurationPrivate? _ConfPrivate;
 
         public string? DataStorePath
@@ -28,34 +29,22 @@ namespace WPR.Common
             set => _ConfPrivate!.GamerTag = value;
         }
 
-        public static Configuration Current
-        {
-            get
-            {
-                if (_Current == null)
-                {
-                    _Current = new Configuration();
-                }
+        public static Configuration? Current { get; set; }
 
-                return _Current;
-            }
-        }
-
-        private static string ConfigurationFilePathFull => Path.Combine(Path.Combine(Environment.GetFolderPath(
-            Environment.SpecialFolder.LocalApplicationData), "WPR"), ConfigurationFilePath);
+        private string ConfigurationFilePathFull => Path.Combine(PrivateDataFolderPath, ConfigurationFilePath);
 
         public void RestoreDefaultDataStoragePath()
         {
-            DataStorePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WPR");
+            DataStorePath = PrivateDataFolderPath;
         }
 
-        public Configuration()
+        public Configuration(string PrivateDataFolder)
         {
+            PrivateDataFolderPath = PrivateDataFolder;
+
             try
             {
                 var seralizer = new JsonSerializer();
-                var configurationFilePathFull = 
-
                 _ConfPrivate = JsonConvert.DeserializeObject<ConfigurationPrivate>(File.ReadAllText(ConfigurationFilePathFull));
             } catch (Exception ex)
             {
@@ -65,7 +54,7 @@ namespace WPR.Common
 
             if (DataStorePath == null)
             {
-                DataStorePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WPR");
+                DataStorePath = PrivateDataFolder;
             }
         }
 

@@ -14,9 +14,6 @@ namespace WPR.UI
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
-
-            Filesystem.CopyFilesRecursively(Path.Combine(Directory.GetCurrentDirectory(), "Database"),
-                Configuration.Current.DataPath("Database"));
         }
 
         public override void OnFrameworkInitializationCompleted()

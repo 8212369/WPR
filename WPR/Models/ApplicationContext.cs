@@ -10,8 +10,8 @@ namespace WPR.Models
         public DbSet<Application>? Applications { get; set; }
         private static ApplicationContext? _Current;
 
-        private const string DatabasePath = "Database\\applications.db";
-        private const string DatabaseFolder = "Database\\";
+        private const string DatabasePath = "Database/applications.db";
+        private const string DatabaseFolder = "Database";
 
         public static ApplicationContext Current
         {

@@ -20,74 +20,56 @@ namespace Microsoft.Xna.Framework.GamerServices
 
         public Texture2D GamerPicture
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            get;
+            internal set;
         }
 
         public int GamerScore
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            get;
+            internal set;
         }
 
         public GamerZone GamerZone
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            get;
+            internal set;
         }
 
         public bool IsDisposed
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            get;
+            internal set;
         }
 
         public string Motto
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            get;
+            internal set;
         }
 
         public RegionInfo Region
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            get;
+            internal set;
         }
 
         public float Reputation
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            get;
+            internal set;
         }
 
         public int TitlesPlayed
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            get;
+            internal set;
         }
 
         public int TotalAchievements
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            get;
+            internal set;
         }
 
     }

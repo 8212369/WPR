@@ -19,15 +19,16 @@ namespace WPR
     public static class ApplicationInstaller
     {
         private const string TempXmlFile = "temp.xml";
+        private static string TempXmlFileFullPath => Configuration.Current!.DataPath(TempXmlFile);
 
-        private static async Task<(ApplicationInstallError, Application?, string)> CreateApplicationEntryAndExtract(string path, Action<int> progressSet, Func<Application, IObservable<bool>> deleteExistingApp, CancellationToken canceled)
+        private static async Task<(ApplicationInstallError, Application?, string)> CreateApplicationEntryAndExtract(Stream fileStream, Action<int> progressSet, Func<Application, IObservable<bool>> deleteExistingApp, CancellationToken canceled)
         {
             Application? app = null;
             string dataFolderProduct = "";
 
             try
             {
-                ZipArchive archive = ZipFile.OpenRead(path);
+                ZipArchive archive = new ZipArchive(fileStream);
                 ZipArchiveEntry? entry = archive.GetEntry("WMAppManifest.xml");
                 if (entry == null)
                 {
@@ -41,10 +42,10 @@ namespace WPR
 
                 progressSet(3);
 
-                entry.ExtractToFile(TempXmlFile, true);
+                entry.ExtractToFile(TempXmlFileFullPath, true);
 
                 XmlDocument wmManifestDoc = new XmlDocument();
-                wmManifestDoc.Load(TempXmlFile);
+                wmManifestDoc.Load(TempXmlFileFullPath);
 
                 XmlElement? root = wmManifestDoc.DocumentElement;
                 XmlNodeList? appNodeList = root!.SelectNodes("//App");
@@ -67,8 +68,9 @@ namespace WPR
                 }
 
                 string productTrimmed = productAttrib!.Value.Trim('{').Trim('}');
-                string storeFolder = Configuration.Current.DataPath(Application.DataStoreFolder);
+                string storeFolder = Configuration.Current!.DataPath(Application.DataStoreFolder);
                 string productStoreFolder = Path.Combine(storeFolder, productTrimmed);
+                string productStoreFolderRelative = Path.Combine(Application.DataStoreFolder, productTrimmed);
 
                 List<Application> existingApp = await ApplicationContext.Current.Applications!
                     .Where(a => a.ProductId == productTrimmed)
@@ -78,8 +80,12 @@ namespace WPR
                 {
                     if (await deleteExistingApp(existingApp[0]))
                     {
-                        Directory.Delete(productStoreFolder, true);
+                        if (Directory.Exists(productStoreFolder))
+                        {
+                            Directory.Delete(productStoreFolder, true);
+                        }
                         ApplicationContext.Current.Applications!.Remove(existingApp[0]);
+                        await ApplicationContext.Current.SaveChangesAsync();
                     } else
                     {
                         return ( ApplicationInstallError.Canceled, app, dataFolderProduct );
@@ -114,10 +120,10 @@ namespace WPR
                     return (ApplicationInstallError.Canceled, app, dataFolderProduct);
                 }
 
-                entry.ExtractToFile(TempXmlFile, true);
+                entry.ExtractToFile(TempXmlFileFullPath, true);
 
                 wmManifestDoc = new XmlDocument();
-                wmManifestDoc.Load(TempXmlFile);
+                wmManifestDoc.Load(TempXmlFileFullPath);
 
                 XmlNode? deploymentNode = wmManifestDoc.DocumentElement;
 
@@ -190,7 +196,7 @@ namespace WPR
                     Name = titleAttrib.Value,
                     ApplicationType = runtimeTypeParsed,
                     Version = versionAttrib.Value,
-                    IconPath = (iconPath == null) ? "" : Path.Combine(productStoreFolder, iconPath),
+                    IconPath = (iconPath == null) ? "" : Path.Combine(productStoreFolderRelative, iconPath),
                     Publisher = (publisherAttrib == null) ? "Unknown" : publisherAttrib.Value,
                     Author = (authorAttrib == null) ? "Unknown" : authorAttrib.Value,
                     Description = (descriptionAttrib == null) ? "" : descriptionAttrib.Value,
@@ -215,7 +221,7 @@ namespace WPR
             return (ApplicationInstallError.None, app, dataFolderProduct);
         }
 
-        public static async Task<ApplicationInstallError> Install(string path, Action<int> progressSet, Func<Application, IObservable<bool>> deleteExistingApp, CancellationToken cancelSource)
+        public static async Task<ApplicationInstallError> Install(Stream fileStream, Action<int> progressSet, Func<Application, IObservable<bool>> deleteExistingApp, CancellationToken cancelSource)
         {
             try
             {
@@ -224,7 +230,7 @@ namespace WPR
                 ApplicationInstallError error;
 
                 // 60% spend for extracting files
-                (error, app, appDataFolder) = await Task.Run(() => CreateApplicationEntryAndExtract(path, progressSet, deleteExistingApp, cancelSource));
+                (error, app, appDataFolder) = await Task.Run(() => CreateApplicationEntryAndExtract(fileStream, progressSet, deleteExistingApp, cancelSource));
 
                 if (error != ApplicationInstallError.None)
                 {
@@ -259,7 +265,7 @@ namespace WPR
                 {
                     try
                     {
-                        await AudioCompabilityConverter.ScanWmaAndConvert(Path.Combine(appDataFolder, "Content"),
+                        await AudioCompabilityConverter.ScanWmaAndConvert(appDataFolder,
                             progress => progressSet(80 + (int)((double)progress / 5)),
                             cancelSource);
                     } catch (Exception exception)

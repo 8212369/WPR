@@ -1,12 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
-	<TargetFrameworks>net5.0</TargetFrameworks>
+	<TargetFrameworks>net5.0;net6.0-android</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
-	<TargetFrameworks>net5.0-windows10.0.17763.0</TargetFrameworks>
+	<TargetFrameworks>net5.0-windows10.0.17763.0;net6.0-android</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+	<AvaloniaVersion>11.0.999-cibuild0023504-beta</AvaloniaVersion>
+	<EFVersion Condition="'$(TargetFramework)' == 'net5.0-windows10.0.17763.0'">5.0.17</EFVersion>
+	<EFVersion Condition="'$(TargetFramework)' != 'net5.0-windows10.0.17763.0'">6.0.8</EFVersion>
+	<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-android'">21</SupportedOSPlatformVersion>
+	<OutputType>Library</OutputType>
 	<Nullable>enable</Nullable>
     <!--Avalonia doesen't support TrimMode=link currently,but we are working on that https://github.com/AvaloniaUI/Avalonia/issues/6892 -->
     <TrimMode>copyused</TrimMode>
@@ -31,23 +35,27 @@
     <TrimmableAssembly Include="Avalonia.Themes.Default" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.18" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.18" />
+    <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.18" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.18" />
-    <PackageReference Include="MessageBox.Avalonia" Version="2.1.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.17" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.17" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.17">
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="$(AvaloniaVersion)" />
+	<PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
+	<PackageReference Include="Markdown.Avalonia" Version="11.0.0-a1" />
+	<PackageReference Include="DialogHost.Avalonia" Version="0.5.1" />
+	<PackageReference Include="MessageBox.Avalonia" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(EFVersion)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(EFVersion)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="$(EFVersion)">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="5.4.0" />
     <PackageReference Include="XamlNameReferenceGenerator" Version="1.3.4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ThirdParty\DesktopNotifications\DesktopNotifications\DesktopNotifications.csproj" />
+    <ProjectReference Include="..\ThirdParty\Icons.Avalonia\src\Projektanker.Icons.Avalonia.FontAwesome\Projektanker.Icons.Avalonia.FontAwesome.csproj" />
+    <ProjectReference Include="..\ThirdParty\Icons.Avalonia\src\Projektanker.Icons.Avalonia.MaterialDesign\Projektanker.Icons.Avalonia.MaterialDesign.csproj" />
+    <ProjectReference Include="..\ThirdParty\Icons.Avalonia\src\Projektanker.Icons.Avalonia\Projektanker.Icons.Avalonia.csproj" />
     <ProjectReference Include="..\WPR\WPR.csproj" />
   </ItemGroup>
   <ItemGroup>
@@ -62,14 +70,11 @@
     <Compile Update="Views\MainWindowDesktop.axaml.cs">
       <DependentUpon>MainWindowDesktop.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\ProgressView.axaml.cs">
+      <DependentUpon>ProgressView.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
   </ItemGroup>
-  <Target Name="Copy pre-made database" AfterTargets="Build">
-	  <ItemGroup>
-		  <_CopyItems Include="$(SolutionDir)Database\**\*.*" />
-	  </ItemGroup>
-     <Copy SourceFiles="@(_CopyItems)" DestinationFolder="$(OutputPath)\Database\%(RecursiveDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-  </Target>
 </Project>

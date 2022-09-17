@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using WPR.Models;
 
 namespace WPR.UI.Views
 {

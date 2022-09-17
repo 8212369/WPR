@@ -2,6 +2,7 @@
 using System.IO;
 
 using WPR.Models;
+using WPR.Common;
 
 namespace WPR.UI.ViewModels
 {
@@ -35,7 +36,7 @@ namespace WPR.UI.ViewModels
             {
                 if (_Icon == null)
                 {
-                    _Icon = Bitmap.DecodeToWidth(new FileStream(_App.IconPath, FileMode.Open, FileAccess.Read, FileShare.Read),
+                    _Icon = Bitmap.DecodeToWidth(new FileStream(Configuration.Current!.DataPath(_App.IconPath), FileMode.Open, FileAccess.Read, FileShare.Read),
                         IconSize);
                 }
 

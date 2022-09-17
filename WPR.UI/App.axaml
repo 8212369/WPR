@@ -8,5 +8,10 @@
 
     <Application.Styles>
         <FluentTheme Mode="Dark"/>
+		<StyleInclude Source="avares://DialogHost.Avalonia/Styles.xaml"/>
+
+		<Style Selector="Label">
+			<Setter Property="Foreground" Value="White" />
+		</Style>
     </Application.Styles>
 </Application>

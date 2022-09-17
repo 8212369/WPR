@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace Microsoft.Xna.Framework.GamerServices
 {
@@ -8,19 +9,57 @@ namespace Microsoft.Xna.Framework.GamerServices
     {
         public static bool _SimulateTrialMode = false;
 
+        public static Func<string, string, IEnumerable<string>, int, MessageBoxIcon, Task<int>> ShowMessageBoxFunc;
+        public static Func<string, string, string, Task<string?>> ShowInputBoxFunc;
+
         public static IAsyncResult BeginShowKeyboardInput(PlayerIndex player, string title, string description, string defaultText, AsyncCallback callback, object state)
         {
-            throw new NotImplementedException();
+            return Task.Run(async () =>
+            {
+                string? result = await ShowInputBoxFunc(title, description, defaultText);
+                if (result == null)
+                {
+                    result = defaultText;
+                }
+
+                if (callback != null)
+                {
+                    TaskCompletionSource<string> compSource = new TaskCompletionSource<string>(state);
+                    compSource.SetResult(result);
+
+                    callback.Invoke(compSource.Task);
+                }
+
+                return result;
+            });
         }
 
         public static IAsyncResult BeginShowMessageBox(string title, string text, IEnumerable<string> buttons, int focusButton, MessageBoxIcon icon, AsyncCallback callback, object state)
         {
-            throw new NotImplementedException();
+            if (buttons.Count() > 2)
+            {
+                throw new ArgumentException("Show message box can't handle more than two buttons!");
+            }
+
+            return Task.Run(async () =>
+            {
+                int result = await ShowMessageBoxFunc(title, text, buttons, focusButton, icon);
+
+                if (callback != null)
+                {
+                    TaskCompletionSource<int> compSource = new TaskCompletionSource<int>(state);
+                    compSource.SetResult(result);
+
+                    callback.Invoke(compSource.Task);
+                }
+
+                return result;
+            });
         }
 
         public static IAsyncResult BeginShowMessageBox(PlayerIndex player, string title, string text, IEnumerable<string> buttons, int focusButton, MessageBoxIcon icon, AsyncCallback callback, object state)
         {
-            throw new NotImplementedException();
+            return BeginShowMessageBox(title, text, buttons, focusButton, icon, callback, state);
         }
 
         public static IAsyncResult BeginShowStorageDeviceSelector(AsyncCallback callback, object state)
@@ -50,12 +89,12 @@ namespace Microsoft.Xna.Framework.GamerServices
 
         public static string EndShowKeyboardInput(IAsyncResult result)
         {
-            throw new NotImplementedException();
+            return (result as Task<string>)!.Result;
         }
 
         public static int? EndShowMessageBox(IAsyncResult result)
         {
-            throw new NotImplementedException();
+            return (result as Task<int>)!.Result;
         }
 
         public static void ShowComposeMessage(PlayerIndex player, string text, IEnumerable<Gamer> recipients)

@@ -1,3 +1,9 @@
 [submodule "ThirdParty/fna"]
 	path = ThirdParty/fna
-	url = https://github.com/fna-xna/fna
+	url = https://github.com/8212369/fna
+[submodule "ThirdParty/Icons.Avalonia"]
+	path = ThirdParty/Icons.Avalonia
+	url = https://github.com/Projektanker/Icons.Avalonia
+[submodule "ThirdParty/DesktopNotifications"]
+	path = ThirdParty/DesktopNotifications
+	url = https://github.com/8212369/DesktopNotifications

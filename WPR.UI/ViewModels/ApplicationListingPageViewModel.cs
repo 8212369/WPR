@@ -11,6 +11,7 @@ using Avalonia.Threading;
 using System;
 using System.Reactive.Linq;
 using System.Collections.ObjectModel;
+using System.IO;
 
 namespace WPR.UI.ViewModels
 {
@@ -19,16 +20,11 @@ namespace WPR.UI.ViewModels
         internal delegate void OnProgressNeedSet(int value);
         internal event OnProgressNeedSet? InstallationSetProgress;
 
-        internal delegate void OnPrepareAppLaunch();
-        internal delegate void OnAppDone(bool runOk);
-        internal event OnPrepareAppLaunch? AppPrepareLaunch;
-        internal event OnAppDone? AppDone;
-
         private string _SearchText;
         private ObservableCollection<ApplicationItemViewModel> _Applications;
         private ApplicationItemViewModel? _ChoosenApp;
 
-        public ReactiveCommand<string, ApplicationInstallError> InstallRequestCommand;
+        public ReactiveCommand<Stream, ApplicationInstallError> InstallRequestCommand;
         public ReactiveCommand<string, Unit> AppSearchCommand;
         public Interaction<Application, bool> DeleteExistingAppInteraction;
 
@@ -43,28 +39,8 @@ namespace WPR.UI.ViewModels
             get { return _ChoosenApp; }
             set
             {
-                AppPrepareLaunch?.Invoke();
                 _ChoosenApp = value;
-
-                NativeUI.NotificationManager.ShowNotification(new DesktopNotifications.Notification()
-                {
-                    Title = Properties.Resources.LaunchingInProcess,
-                    Body = _ChoosenApp!.Name!,
-                    ImagePath = _ChoosenApp.App.IconPath
-                }, expirationTime: DateTime.Now + TimeSpan.FromSeconds(5));
-
-                bool runOk = true;
-
-                try
-                {
-                    ApplicationLaunch.Start(_ChoosenApp!.App);
-                } catch (Exception ex)
-                {
-                    Log.Error(LogCategory.AppList, $"Game run error: \n{ex}");
-                    runOk = false;
-                }
-
-                AppDone?.Invoke(runOk);
+                ApplicationLaunchRequest.Ask(_ChoosenApp!.App);
             }
         }
 
@@ -101,12 +77,12 @@ namespace WPR.UI.ViewModels
             Applications = new ObservableCollection<ApplicationItemViewModel>();
             DeleteExistingAppInteraction = new Interaction<Application, bool>();
 
-            InstallRequestCommand = ReactiveCommand.CreateFromTask<string, ApplicationInstallError>(
-                async path =>
+            InstallRequestCommand = ReactiveCommand.CreateFromTask<Stream, ApplicationInstallError>(
+                async fileStream =>
                 {
                     CancelSource = new CancellationTokenSource();
 
-                    return await ApplicationInstaller.Install(path,
+                    return await ApplicationInstaller.Install(fileStream,
                         progressValue => InstallationSetProgress!.Invoke(progressValue),
                         app => DeleteExistingAppInteraction!.Handle(app),
                         CancelSource.Token);

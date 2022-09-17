@@ -3,6 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
 using System;
 
+using WPR.Common;
+
 namespace Microsoft.Xna.Framework.GamerServices
 {
     public class Achievement
@@ -39,7 +41,7 @@ namespace Microsoft.Xna.Framework.GamerServices
 
         public Stream GetPicture()
         {
-            Stream res = new FileStream(_IconPath, FileMode.Open);
+            Stream res = new FileStream(Configuration.Current!.DataPath(_IconPath), FileMode.Open);
             return res;
         }
     }

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
+
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 using WPR.Common;
 
@@ -28,18 +31,36 @@ namespace Microsoft.Xna.Framework.GamerServices
 
         public IAsyncResult BeginGetProfile(AsyncCallback callback, object asyncState)
         {
-            throw new NotImplementedException();
+            return Task.Run(async () =>
+            {
+                GamerProfile profile = new GamerProfile();
+                var earnedIte = AchievementContext.Current.Achievements!.Where(a => a.IsEarned);
+
+                profile.TotalAchievements = await earnedIte.CountAsync();
+                profile.GamerScore = await earnedIte.SumAsync(a => a.GamerScore);
+                profile.GamerZone = GamerZone.Underground;
+                profile.Region = System.Globalization.RegionInfo.CurrentRegion;
+                profile.Reputation = 100.0f;
+                profile.Motto = "";
+
+                if (callback != null)
+                {
+                    TaskCompletionSource<GamerProfile> source = new TaskCompletionSource<GamerProfile>(asyncState);
+                    source.SetResult(profile);
+
+                    callback(source.Task);
+                }
+
+                return profile;
+            });
         }
 
         public GamerProfile EndGetProfile(IAsyncResult result)
         {
-            throw new NotImplementedException();
+            return (result as Task<GamerProfile>)!.Result;
         }
 
-        public GamerProfile GetProfile()
-        {
-            throw new NotImplementedException();
-        }
+        public GamerProfile GetProfile() => EndGetProfile(BeginGetProfile(null, null));
 
         public override string ToString()
         {
@@ -59,6 +80,8 @@ namespace Microsoft.Xna.Framework.GamerServices
             get => _GamerTag;
             set => _GamerTag = value;
         }
+
+        public string DisplayName => _GamerTag;
 
         public bool IsDisposed
         {

@@ -2,7 +2,6 @@
 using HtmlAgilityPack;
 using WPR.Common;
 
-using System.Drawing;
 using System.IO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,35 +12,6 @@ namespace Microsoft.Xna.Framework.GamerServices.TrueAchievements
 {
     public class Scraper
     {
-        public static List<String> SplitImageAndSave(string productId, Image originalImage, int totalCount, String titleId)
-        {
-            int tileSize = originalImage.Width;
-
-            Bitmap img = new Bitmap(tileSize, tileSize, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            var graphicsDrawer = System.Drawing.Graphics.FromImage(img);
-
-            string achievementsStorePath = Configuration.Current.DataPath($"Database\\Achievements\\{productId}");
-            Directory.CreateDirectory(achievementsStorePath);
-
-            List<String> pathList = new List<String>();
-
-            for (int i = 0; i < totalCount; i++)
-            {
-                string imagePath = Path.Combine(achievementsStorePath, $"achievement{i}.png");
-
-                graphicsDrawer.Clear(System.Drawing.Color.Transparent);
-                graphicsDrawer.DrawImage(originalImage, 
-                    new System.Drawing.Rectangle(0, 0, tileSize, tileSize),
-                    new System.Drawing.Rectangle(0, i * tileSize, tileSize, tileSize),
-                    GraphicsUnit.Pixel);
-
-                img.Save(imagePath, System.Drawing.Imaging.ImageFormat.Png);
-                pathList.Add(imagePath);
-            }
-
-            return pathList;
-        }
-
         public async static Task<AchievementCollection> QueryAchievements(string productId)
         {
             GameToKey researcher = new GameToKey();
@@ -86,10 +56,12 @@ namespace Microsoft.Xna.Framework.GamerServices.TrueAchievements
 
             byte[] imageData = await WWWAccess.CallUrlDownload(sms1Path);
             MemoryStream imageDataStream = new MemoryStream(imageData);
-            Image imageTrail = Image.FromStream(imageDataStream);
 
             var icons = document.DocumentNode.QuerySelectorAll(".ach-panels li");
-            List<String> imagePaths = SplitImageAndSave(productId, imageTrail, icons.Count, "");
+            string currentStoreImages = Configuration.Current!.DataPath($"Database/Achievements/{productId}");
+            List<String> imagePaths = ImageUtils.SplitAndSave(currentStoreImages,
+                "achievement{0}.png", imageDataStream,
+                icons.Count, 1);
 
             var collection = new AchievementCollection();
             Achievement[] achievementList = new Achievement[icons.Count];
@@ -108,10 +80,10 @@ namespace Microsoft.Xna.Framework.GamerServices.TrueAchievements
                     Key = keyFinal,
                     Name = achiKey.InnerText,
                     Description = achiScoreAndDesc.InnerText,
-                    _IconPath = imagePaths[i],
+                    _IconPath = Path.GetRelativePath(Configuration.Current!.DataStorePath!, imagePaths[i]),
                     GamerScore = achiScore,
                     IsEarned = false,
-                    HowToEarn = "Secert",
+                    HowToEarn = achiScoreAndDesc.InnerText,
                     DisplayBeforeEarned = true,
                     OwnProductId = productId
                 });
