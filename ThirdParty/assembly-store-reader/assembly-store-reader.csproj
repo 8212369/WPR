@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Company>Microsoft Corporation</Company>
+    <Copyright>2021 Microsoft Corporation</Copyright>
+    <Version>0.0.1</Version>
+    <OutputType>Library</OutputType>
+    <TargetFrameworks>net6.0;net6.0-android;net5.0</TargetFrameworks>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Xamarin.Android.AssemblyStoreReader</RootNamespace>
+	<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-android'">21</SupportedOSPlatformVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="K4os.Compression.LZ4" Version="1.2.16" />
+  </ItemGroup>
+</Project>

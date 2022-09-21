@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+	<TargetFrameworks>net5.0;net6.0-android</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
+	<TargetFrameworks>net5.0-windows10.0.17763.0;net6.0-android</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup>
+	<EFVersion Condition="'$(TargetFramework)' == 'net5.0-windows10.0.17763.0'">5.0.17</EFVersion>
+	<EFVersion Condition="'$(TargetFramework)' != 'net5.0-windows10.0.17763.0'">6.0.8</EFVersion>
+	<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-android'">21</SupportedOSPlatformVersion>
+	<Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="FFMpegCore" Version="4.8.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(EFVersion)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(EFVersion)" />
+    <PackageReference Include="Mono.Cecil" Version="0.11.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Reactive" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Condition="'$(TargetFramework)' == 'net6.0-android'" Include="$(SolutionDir)\JavaBindings\com.arthenica.ffmpegkit\com.arthenica.ffmpegkit.csproj" />
+    <ProjectReference Include="$(SolutionDir)\Core\Microsoft.Device.Sensors\Microsoft.Devices.Sensors.csproj" />
+    <ProjectReference Include="$(SolutionDir)\Core\Microsoft.Phone\Microsoft.Phone.csproj" />
+    <ProjectReference Include="$(SolutionDir)\Core\Microsoft.Xna.Framework.GamerServices\Microsoft.Xna.Framework.GamerServices.csproj" />
+    <ProjectReference Include="$(SolutionDir)\Core\System.Device\System.Device.csproj" />
+    <ProjectReference Include="$(SolutionDir)\ThirdParty\fna\FNA.Core.csproj" />
+    <ProjectReference Include="$(SolutionDir)\Core\WPR.WindowsCompability\WPR.WindowsCompability.csproj" />
+    <ProjectReference Include="$(SolutionDir)\Core\WPR.Common\WPR.Common.csproj" />
+    <ProjectReference Include="$(SolutionDir)\Core\WPR.XnaCompabilityPatch\WPR.XnaCompability.csproj" />
+    <ProjectReference Include="$(SolutionDir)\Core\WPR.StandardCompability\WPR.StandardCompability.csproj" />
+  </ItemGroup>
+</Project>

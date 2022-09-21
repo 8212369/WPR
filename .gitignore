@@ -1,4 +1,5 @@
 bin/
 obj/
 .vs/
-x64
+x64/
+*.bak

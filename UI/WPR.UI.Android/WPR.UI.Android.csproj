@@ -1,0 +1,61 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0-android</TargetFramework>
+    <AvaloniaVersion>11.0.999-cibuild0023504-beta</AvaloniaVersion>
+    <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
+    <Nullable>enable</Nullable>
+    <ApplicationId>com.8212369.WPR</ApplicationId>
+    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
+	<EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+    <PublishTrimmed>False</PublishTrimmed>
+	<RuntimeIdentifiers>android-arm;android-arm64;android-x64</RuntimeIdentifiers>
+	<XamarinGoogleGuavaListenableFutureOptOut>true</XamarinGoogleGuavaListenableFutureOptOut>
+	<XamarinGoogleGuavaOptOut>true</XamarinGoogleGuavaOptOut>
+  </PropertyGroup>
+  <Target Name="CopyPremadeDb" BeforeTargets="CoreCompile" DependsOnTargets="PrepareForBuild">
+	<ItemGroup>
+		<_CopyItems Include="$(SolutionDir)Database\**\*.*" />
+	</ItemGroup>
+	<Copy SourceFiles="@(_CopyItems)" DestinationFolder="$(ProjectDir)\Database\%(RecursiveDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+  </Target>
+  <ItemGroup>
+	<AndroidAsset Include="Database\applications.db" />
+	<AndroidAsset Include="Database\achievements.db" />
+	<AndroidAsset Include="Database\TrueAchievements\AchievementsNameToKey.json" />
+	<AndroidAsset Include="Database\TrueAchievements\ProductIdUrl.json" />
+  </ItemGroup>
+  <ItemGroup>
+	<AndroidResource Include="Icon.png">
+	  <Link>Resources\drawable\Icon.png</Link>
+	</AndroidResource>
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release' Or '$(Configuration)'=='RelWithDebInfo'">
+	<PublishTrimmed>False</PublishTrimmed>
+	<AotAssemblies>False</AotAssemblies>
+	<RunAOTCompilation>False</RunAOTCompilation>
+	<EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<PackageReference Include="Avalonia.Android" Version="$(AvaloniaVersion)" />
+	<PackageReference Include="SQLitePCLRaw.provider.dynamic_cdecl" Version="2.0.6" />
+	<PackageReference Include="System.ServiceModel.Http" Version="4.10.0" />
+	<PackageReference Include="System.ServiceModel.Primitives" Version="4.10.0" />
+    <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.5.0" />
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.ViewModel" Version="2.5.1" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)\JavaBindings\Org.Libsdl.App\Org.Libsdl.App.csproj" />
+    <ProjectReference Include="$(SolutionDir)\ThirdParty\assembly-store-reader\assembly-store-reader.csproj" />
+    <ProjectReference Include="$(SolutionDir)\UI\WPR.UI\WPR.UI.csproj" />
+  </ItemGroup>
+</Project>
