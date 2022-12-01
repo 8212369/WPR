@@ -50,5 +50,13 @@ namespace Microsoft.Xna.Framework.GamerServices
         {
             return StubUtils.ForeverTask;
         }
+
+        public int PageStart
+        {
+            get
+            {
+                return 0;
+            }
+        }
     }
 }

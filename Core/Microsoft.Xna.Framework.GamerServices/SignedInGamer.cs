@@ -17,6 +17,7 @@ namespace Microsoft.Xna.Framework.GamerServices
         private static bool FirstSignInSessionDone = false;
 
         private PlayerIndex _PlayerIndex;
+        private GamerPresence _GamerPresence = new GamerPresence();
 
         public event EventHandler<EventArgs> AvatarChanged;
         
@@ -226,7 +227,7 @@ namespace Microsoft.Xna.Framework.GamerServices
         {
             get
             {
-                throw new NotImplementedException();
+                return _GamerPresence;
             }
         }
 

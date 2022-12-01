@@ -6,6 +6,9 @@ namespace Microsoft.Xna.Framework.GamerServices
 {
     public sealed class GamerPresence
     {
+        private GamerPresenceMode _GamerPresenceMode = GamerPresenceMode.None;
+        private int _PresenceValue = 0;
+
         internal GamerPresence()
         {
         }
@@ -14,11 +17,11 @@ namespace Microsoft.Xna.Framework.GamerServices
         {
             get
             {
-                throw new NotImplementedException();
+                return _GamerPresenceMode;
             }
             set
             {
-                throw new NotImplementedException();
+                _GamerPresenceMode = value;
             }
         }
 
@@ -26,11 +29,11 @@ namespace Microsoft.Xna.Framework.GamerServices
         {
             get
             {
-                throw new NotImplementedException();
+                return _PresenceValue;
             }
             set
             {
-                throw new NotImplementedException();
+                _PresenceValue = value;
             }
         }
     }
