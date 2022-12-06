@@ -9,6 +9,13 @@ namespace WPR.XnaCompability.Media
         private ArtistCollection _Artists;
         private AlbumCollection _Albums;
 
+        public MediaLibrary()
+        {
+            _Songs = new SongCollection();
+            _Artists = new ArtistCollection();
+            _Albums = new AlbumCollection();
+        }
+
         public MediaLibrary(MediaSource source)
         {
             _Songs = new SongCollection();
