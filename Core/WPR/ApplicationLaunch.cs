@@ -81,6 +81,9 @@ namespace WPR
                                 args.GraphicsDeviceInformation.PresentationParameters.BackBufferWidth,
                                 args.GraphicsDeviceInformation.PresentationParameters.BackBufferHeight
                             );
+#if !__MOBILE__
+                            args.GraphicsDeviceInformation.PresentationParameters.IsFullScreen = false;
+#endif
                         };
                     }
 
