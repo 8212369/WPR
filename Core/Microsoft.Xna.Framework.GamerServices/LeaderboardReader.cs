@@ -58,5 +58,12 @@ namespace Microsoft.Xna.Framework.GamerServices
                 return 0;
             }
         }
+        public int TotalLeaderboardSize
+        {
+            get
+            {
+                return 0;
+            }
+        }
     }
 }
